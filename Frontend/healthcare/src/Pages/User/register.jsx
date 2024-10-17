@@ -404,9 +404,9 @@ const RegisterForm = () => {
               style={{
                 maxWidth: '18%',
                 height: 'auto',
-                position: 'absolute', // This makes the image fixed
-                top: '240px',          // Adjust the top position if needed
-                left: '900px',         // Adjust the left position if needed
+                position: 'absolute',
+                top: '240px',         
+                left: '900px',        
               }}
             />
           </Box>

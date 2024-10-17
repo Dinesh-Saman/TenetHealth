@@ -10,14 +10,16 @@ const AddTicket = () => {
   const [priority, setPriority] = useState('');
   const [errors, setErrors] = useState({});
 
+  // Only update email without validation
   const handleEmailChange = (event) => {
-    const emailValue = event.target.value;
-    setEmail(emailValue);
+    setEmail(event.target.value);
+  };
 
-    // Regular expression to validate email format
+  // Validate email on blur (when input loses focus)
+  const handleEmailBlur = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(emailValue)) {
+    if (!emailRegex.test(email)) {
       setErrors(prevErrors => ({ ...prevErrors, email: 'Please enter a valid email address.' }));
     } else {
       setErrors(prevErrors => ({ ...prevErrors, email: '' }));
@@ -48,16 +50,25 @@ const AddTicket = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!email) newErrors.email = "Email is required.";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      newErrors.email = "Email is required.";
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
     if (!issueTitle) newErrors.issueTitle = "Issue title is required.";
     if (!issueDescription) newErrors.issueDescription = "Issue description is required.";
     if (!priority) newErrors.priority = "Priority is required.";
+
     return newErrors;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = validateForm();
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -123,7 +134,8 @@ const AddTicket = () => {
           variant="outlined"
           value={email}
           onChange={handleEmailChange}
-          helperText={errors.email}
+          onBlur={handleEmailBlur} // Validate email on blur
+          helperText={errors.email || ' '}  // Pre-reserve space for the error message
           error={!!errors.email}
         />
         <TextField
@@ -132,8 +144,10 @@ const AddTicket = () => {
           label="Issue Title"
           variant="outlined"
           value={issueTitle}
+          rows={3}
+          multiline
           onChange={handleIssueTitleChange}
-          helperText={errors.issueTitle}
+          helperText={errors.issueTitle || ' '}
           error={!!errors.issueTitle}
         />
         <TextField
@@ -145,7 +159,7 @@ const AddTicket = () => {
           rows={4}
           value={issueDescription}
           onChange={handleIssueDescriptionChange}
-          helperText={errors.issueDescription}
+          helperText={errors.issueDescription || ' '}
           error={!!errors.issueDescription}
         />
         <FormControl fullWidth margin="normal" variant="outlined" error={!!errors.priority}>
@@ -159,7 +173,7 @@ const AddTicket = () => {
               <MenuItem key={option} value={option}>{option}</MenuItem>
             ))}
           </Select>
-          <FormHelperText>{errors.priority}</FormHelperText>
+          <FormHelperText>{errors.priority || ' '}</FormHelperText>
         </FormControl>
         <Button
           fullWidth
