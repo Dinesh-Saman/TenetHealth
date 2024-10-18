@@ -27,6 +27,14 @@ const AddPatient = () => {
     setPatientId(generatePatientId());
   }, []);
 
+  const handleBlur = (field) => {
+    // Trigger validation for the specific field when it loses focus
+    setErrors((prevErrors) => {
+      const validationErrors = validateForm();
+      return { ...prevErrors, [field]: validationErrors[field] };
+    });
+  };
+
   const validateForm = () => {
     let newErrors = {}; // Changed from const to let
     if (!patientId) newErrors.patientId = "Patient ID is required.";
@@ -152,7 +160,7 @@ const AddPatient = () => {
               label="Patient ID"
               variant="outlined"
               value={patientId}
-              disabled // Disable the patient ID field since it is auto-generated
+              disabled
               helperText={errors.patientId}
               error={!!errors.patientId}
             />
@@ -167,17 +175,17 @@ const AddPatient = () => {
               error={!!errors.patientName}
             />
             <TextField
-            fullWidth
-            margin="normal"
-            label="Date of Birth"
-            type="date"
-            variant="outlined"
-            value={dob}
-            onChange={handleInputChange(setDob, 'dob')}
-            helperText={errors.dob}
-            error={!!errors.dob}
-            InputLabelProps={{ shrink: true }}
-            inputProps={{ max: new Date().toISOString().split('T')[0] }} // Restricts future dates
+                fullWidth
+                margin="normal"
+                label="Date of Birth"
+                type="date"
+                variant="outlined"
+                value={dob}
+                onChange={handleInputChange(setDob, 'dob')}
+                helperText={errors.dob}
+                error={!!errors.dob}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ max: new Date().toISOString().split('T')[0] }}
             />
 
             <FormControl fullWidth margin="normal" variant="outlined" error={!!errors.gender}>
@@ -198,10 +206,27 @@ const AddPatient = () => {
               margin="normal"
               label="Contact"
               variant="outlined"
+              type='tel'
               value={contact}
               onChange={handleInputChange(setContact, 'contact')}
               helperText={errors.contact}
               error={!!errors.contact}
+              inputProps={{
+                maxLength: 10, 
+                inputMode: 'numeric',
+                pattern: "[0-9]*", 
+            }}
+            onBlur={() => {
+                // Validate contact number on blur (when focus is lost)
+                if (!/^\d{10}$/.test(contact)) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: 'Contact number must be exactly 10 digits.',
+                }));
+                } else {
+                setErrors((prevErrors) => ({ ...prevErrors, contact: '' }));
+                }
+            }}
             />
             <TextField
               fullWidth
@@ -220,6 +245,7 @@ const AddPatient = () => {
               variant="outlined"
               value={nic}
               onChange={handleInputChange(setNic, 'nic')}
+              onBlur={() => handleBlur('nic')}
               helperText={errors.nic}
               error={!!errors.nic}
             />

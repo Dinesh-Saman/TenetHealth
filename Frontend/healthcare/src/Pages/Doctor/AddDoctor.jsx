@@ -104,6 +104,14 @@ const AddDoctor = () => {
     }
   };
 
+  const handleBlur = (field) => {
+    // Trigger validation for the specific field when it loses focus
+    setErrors((prevErrors) => {
+      const validationErrors = validateForm();
+      return { ...prevErrors, [field]: validationErrors[field] };
+    });
+  };
+
   return (
     <Box>
       <Box display="flex">
@@ -159,6 +167,7 @@ const AddDoctor = () => {
                     variant="outlined"
                     value={contactNumber}
                     onChange={handleContactNumberChange}
+                    onBlur={() => handleBlur('contactNumber')}
                     helperText={errors.contactNumber}
                     error={!!errors.contactNumber}
                 />

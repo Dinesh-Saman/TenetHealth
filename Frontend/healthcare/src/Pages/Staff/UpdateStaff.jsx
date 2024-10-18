@@ -155,6 +155,13 @@ const UpdateStaff = () => {
   ];
   const statusesList = ['Active', 'Inactive', 'Terminated'];
 
+  const handleBlur = (field) => {
+    setErrors((prevErrors) => {
+      const validationErrors = validateForm();
+      return { ...prevErrors, [field]: validationErrors[field] };
+    });
+  };
+
   return (
     <Box>
       <Box display="flex">
@@ -196,6 +203,7 @@ const UpdateStaff = () => {
                 variant="outlined"
                 value={dob}
                 onChange={handleInputChange(setDob, 'dob')}
+                onBlur={() => handleBlur('dob')}
                 helperText={errors.dob}
                 error={!!errors.dob}
                 InputLabelProps={{ shrink: true }}
@@ -222,6 +230,7 @@ const UpdateStaff = () => {
                 variant="outlined"
                 value={contact}
                 onChange={handleInputChange(setContact, 'contact')}
+                onBlur={() => handleBlur('contact')}
                 helperText={errors.contact}
                 error={!!errors.contact}
                 type="tel"
@@ -243,6 +252,7 @@ const UpdateStaff = () => {
                 variant="outlined"
                 value={email}
                 onChange={handleInputChange(setEmail, 'email')}
+                onBlur={() => handleBlur('email')}                
                 helperText={errors.email}
                 error={!!errors.email}
                 type="email"

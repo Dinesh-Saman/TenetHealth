@@ -36,7 +36,7 @@ const MakeAppointment = () => {
 
     if (!name) newErrors.name = "Name is required.";
     if (!age || age <= 0 || age > 120) {
-      newErrors.age = "Age must be a positive number and below 120.";
+      newErrors.age = "Age should be below 120.";
     }    
     if (!contact) {
       newErrors.contact = "Contact is required.";
@@ -71,6 +71,14 @@ const MakeAppointment = () => {
       ...prevErrors,
       [fieldName]: undefined,
     }));
+  };
+
+  const handleBlur = (field) => {
+    // Trigger validation for the specific field when it loses focus
+    setErrors((prevErrors) => {
+      const validationErrors = validateForm();
+      return { ...prevErrors, [field]: validationErrors[field] };
+    });
   };
 
   // Handle contact input to prepend +94 and restrict to 9 digits
@@ -168,12 +176,28 @@ const MakeAppointment = () => {
                   margin="normal"
                   label="Age"
                   variant="outlined"
-                  type="number"
+                  type="tel" // Change to 'tel' to prevent arrows
                   value={age}
                   onChange={handleInputChange(setAge, 'age')}
+                  onBlur={() => handleBlur('age')}
                   helperText={errors.age}
                   error={!!errors.age}
+                  inputProps={{
+                    min: 0, // Set minimum value to 0
+                    pattern: "[0-9]*", // Allow only numbers
+                  }}
+                  onKeyDown={(e) => {
+                    // Prevent non-numeric input
+                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab') {
+                      e.preventDefault();
+                    }
+                  }}
+                  style={{ appearance: 'textfield' }} // Hide default arrows
+                  InputProps={{
+                    style: { MozAppearance: 'textfield', WebkitAppearance: 'none' }, // Hide arrows in Firefox and Webkit-based browsers
+                  }}
                 />
+
                 <TextField
                   fullWidth
                   margin="normal"
@@ -185,6 +209,7 @@ const MakeAppointment = () => {
                     const digitsOnly = inputValue.replace(/\D/g, '').slice(0, 9); 
                     setContact(digitsOnly); 
                   }}
+                  onBlur={() => handleBlur('contact')}
                   helperText={errors.contact}
                   error={!!errors.contact}
                   inputProps={{ maxLength: 13 }} 
@@ -226,6 +251,7 @@ const MakeAppointment = () => {
                   InputLabelProps={{ shrink: true }}
                   value={time}
                   onChange={handleInputChange(setTime, 'time')}
+                  onBlur={() => handleBlur('time')}
                   helperText={errors.time}
                   error={!!errors.time}
                 />
@@ -237,6 +263,7 @@ const MakeAppointment = () => {
                   type="email"
                   value={email}
                   onChange={handleInputChange(setEmail, 'email')}
+                  onBlur={() => handleBlur('email')}
                   helperText={errors.email}
                   error={!!errors.email}
                 />

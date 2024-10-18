@@ -129,6 +129,13 @@ const UpdatePatient = () => {
   const gendersList = ['Male', 'Female', 'Other'];
   const statusesList = ['Active', 'Inactive'];
 
+  const handleBlur = (field) => {
+    setErrors((prevErrors) => {
+      const validationErrors = validateForm();
+      return { ...prevErrors, [field]: validationErrors[field] };
+    });
+  };
+
   return (
     <Box>
       <Box display="flex">
@@ -178,6 +185,7 @@ const UpdatePatient = () => {
               variant="outlined"
               value={dob}
               onChange={handleInputChange(setDob, 'dob')}
+              onBlur={() => handleBlur('dob')}
               helperText={errors.dob}
               error={!!errors.dob}
               InputLabelProps={{
@@ -204,6 +212,7 @@ const UpdatePatient = () => {
               variant="outlined"
               value={contact}
               onChange={handleInputChange(setContact, 'contact')}
+              onBlur={() => handleBlur('contact')}              
               helperText={errors.contact}
               error={!!errors.contact}
             />
@@ -224,6 +233,7 @@ const UpdatePatient = () => {
               variant="outlined"
               value={nic}
               onChange={handleInputChange(setNic, 'nic')}
+              onBlur={() => handleBlur('nic')}
               helperText={errors.nic}
               error={!!errors.nic}
             />
@@ -231,7 +241,7 @@ const UpdatePatient = () => {
               fullWidth
               margin="normal"
               label="Registration Date"
-              type="date" // Change type to date
+              type="date" 
               variant="outlined"
               value={dateOfRegistration}
               onChange={handleInputChange(setDateOfRegistration, 'dateOfRegistration')}

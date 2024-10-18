@@ -5,6 +5,7 @@ import Sidebar from '../../Components/sidebar';
 import { makeStyles } from '@material-ui/core/styles';
 import { Edit, Delete } from '@material-ui/icons';
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert2';
 
 // Custom Pagination Component
 const CustomPagination = ({ count, page, rowsPerPage, onPageChange }) => {
@@ -86,13 +87,37 @@ const ViewPatients = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3002/patients/delete-patient/${id}`);
-      setPatientData(patientData.filter(patient => patient._id !== id));
-    } catch (error) {
-      console.error("There was an error deleting the patient!", error);
+    const result = await swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this patient record!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3002/patients/delete-patient/${id}`);
+        setPatientData(patientData.filter(patient => patient._id !== id));
+        swal.fire(
+          'Deleted!',
+          'The record has been deleted.',
+          'success'
+        );
+      } catch (error) {
+        console.error("There was an error deleting the patient!", error);
+        swal.fire(
+          'Error!',
+          'There was an error deleting the record.',
+          'error'
+        );
+      }
     }
   };
+  
+  
 
   const handleSearchQueryChange = (event) => {
     setSearchQuery(event.target.value);

@@ -4,6 +4,7 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import Sidebar from '../../Components/sidebar';
 import { makeStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert2';
 
 // Custom Pagination Component
 const CustomPagination = ({ count, page, rowsPerPage, onPageChange }) => {
@@ -85,13 +86,28 @@ const ViewAppointments = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3002/appointment/delete-appointment/${id}`);
-      setAppointmentData(appointmentData.filter(appointment => appointment._id !== id));
-    } catch (error) {
-      console.error("There was an error deleting the appointment!", error);
+    const result = await swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this appointment!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3002/appointment/delete-appointment/${id}`);
+        setAppointmentData(appointmentData.filter(appointment => appointment._id !== id));
+        swal.fire('Deleted!', 'The appointment has been deleted.', 'success');
+      } catch (error) {
+        console.error("There was an error deleting the appointment!", error);
+        swal.fire('Error!', 'There was an error deleting the appointment.', 'error');
+      }
     }
   };
+  
 
   const handleSearchQueryChange = (event) => {
     setSearchQuery(event.target.value);

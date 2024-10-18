@@ -7,6 +7,7 @@ import {
 import Sidebar from '../../Components/sidebar';
 import { makeStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert2';
 
 // Custom Pagination Component
 const CustomPagination = ({ count, page, rowsPerPage, onPageChange }) => {
@@ -88,15 +89,29 @@ const ViewDoctors = () => {
     navigate(`/update-doctor/${doctorId}`); // Navigate to the update page
   };
 
-  // Delete handler
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3002/doctors/delete-doctor/${id}`);
-      setDoctorData(doctorData.filter(doctor => doctor._id !== id)); // Update UI after deletion
-    } catch (error) {
-      console.error("Error deleting the doctor!", error);
+    const result = await swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this doctor!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3002/doctors/delete-doctor/${id}`);
+        setDoctorData(doctorData.filter(doctor => doctor._id !== id)); // Update UI after deletion
+        swal.fire('Deleted!', 'The doctor has been deleted.', 'success');
+      } catch (error) {
+        console.error("Error deleting the doctor!", error);
+        swal.fire('Error!', 'There was an error deleting the doctor record.', 'error');
+      }
     }
   };
+  
 
   // Handle search input changes
   const handleSearchQueryChange = (event) => {

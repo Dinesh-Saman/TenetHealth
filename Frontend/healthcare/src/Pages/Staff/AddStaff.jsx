@@ -24,6 +24,15 @@ const AddStaff = () => {
     return `STF-${String(randomId).padStart(4, '0')}`; // Prefix with 'STF-' and ensure it's 4 digits
   };
 
+  const handleBlur = (field) => {
+    // Trigger validation for the specific field when it loses focus
+    setErrors((prevErrors) => {
+      const validationErrors = validateForm();
+      return { ...prevErrors, [field]: validationErrors[field] };
+    });
+  };
+  
+
   useEffect(() => {
     // Automatically set staff ID when the component mounts
     setStaffId(generateStaffId());
@@ -209,6 +218,7 @@ const AddStaff = () => {
                 variant="outlined"
                 value={dob}
                 onChange={handleInputChange(setDob, 'dob')}
+                onBlur={() => handleBlur('dob')}
                 helperText={errors.dob}
                 error={!!errors.dob}
                 InputLabelProps={{ shrink: true }}
@@ -222,23 +232,43 @@ const AddStaff = () => {
                 onChange={handleInputChange(setGender, 'gender')}
                 label="Gender"
               >
-                <MenuItem value=""><em>None</em></MenuItem>
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
               </Select>
               <FormHelperText>{errors.gender}</FormHelperText>
             </FormControl>
             <TextField
-              fullWidth
-              margin="normal"
-              label="Contact"
-              variant="outlined"
-              value={contact}
-              onChange={handleInputChange(setContact, 'contact')}
-              helperText={errors.contact}
-              error={!!errors.contact}
-            />
+                fullWidth
+                margin="normal"
+                label="Contact"
+                variant="outlined"
+                value={contact}
+                type='tel' // Change to 'tel' to prevent arrows
+                onChange={handleInputChange(setContact, 'contact')}
+                helperText={errors.contact}
+                error={!!errors.contact}
+                inputProps={{
+                    maxLength: 10, // Set maximum length to 10
+                    inputMode: 'numeric', // Use numeric keyboard on mobile devices
+                    pattern: "[0-9]*", // Allow only numbers
+                }}
+                onBlur={() => {
+                    // Validate contact number on blur (when focus is lost)
+                    if (!/^\d{10}$/.test(contact)) {
+                    setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        contact: 'Contact number must be exactly 10 digits.',
+                    }));
+                    } else {
+                    setErrors((prevErrors) => ({ ...prevErrors, contact: '' }));
+                    }
+                }}
+                style={{ appearance: 'textfield' }} // Hide default arrows
+                InputProps={{
+                    style: { MozAppearance: 'textfield', WebkitAppearance: 'none' }, // Hide arrows in Firefox and Webkit-based browsers
+                }}
+                />
+
             <TextField
               fullWidth
               margin="normal"
@@ -246,6 +276,7 @@ const AddStaff = () => {
               variant="outlined"
               value={email}
               onChange={handleInputChange(setEmail, 'email')}
+              onBlur={() => handleBlur('email')}
               helperText={errors.email}
               error={!!errors.email}
             />
@@ -266,7 +297,6 @@ const AddStaff = () => {
                 onChange={handleInputChange(setPosition, 'position')}
                 label="Position"
               >
-                <MenuItem value=""><em>None</em></MenuItem>
                 {positionsList.map((pos, index) => (
                   <MenuItem key={index} value={pos}>{pos}</MenuItem>
                 ))}
@@ -280,7 +310,6 @@ const AddStaff = () => {
                 onChange={handleInputChange(setDepartment, 'department')}
                 label="Department"
               >
-                <MenuItem value=""><em>None</em></MenuItem>
                 {departmentsList.map((dept, index) => (
                   <MenuItem key={index} value={dept}>{dept}</MenuItem>
                 ))}
