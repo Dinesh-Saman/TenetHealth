@@ -1,6 +1,8 @@
 // controllers/staffController.js
 const Staff = require("../models/staffModel");
-const mongoose = require('mongoose'); // Import mongoose for ObjectId validation
+const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+require('dotenv').config(); 
 
 // Add a new staff member
 exports.addNewStaff = async (req, res) => {
@@ -49,7 +51,26 @@ exports.addNewStaff = async (req, res) => {
         });
 
         await newStaff.save();
-        res.status(201).json({ message: "New staff member added successfully!" });
+
+        // Send email to the new staff member
+        const transporter = nodemailer.createTransport({
+            service: 'gmail', // Use your email service (e.g., Gmail, Yahoo)
+            auth: {
+                user: process.env.EMAIL_USER, // Your email from .env
+                pass: process.env.EMAIL_PASS // Your email password from .env
+            }
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Welcome to Our Team',
+            text: `Hello ${name},\n\nWelcome to the team! We're excited to have you on board as a ${position}.\n\nBest regards,\nTenet Health`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(201).json({ message: "New staff member added successfully and email sent!" });
     } catch (err) {
         console.error(err); // Log error for debugging
         res.status(500).json({ message: err.message });

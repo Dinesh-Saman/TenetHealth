@@ -64,7 +64,7 @@ exports.addNewAppointment = async (req, res) => {
         });
 
         const mailOptions = {
-            from: process.env.EMAIL, // Your defined email address
+            from: '"Tenet Health" <' + process.env.EMAIL + '>', // Display name with email
             to: email, // Recipient's email address
             subject: 'Appointment Confirmation',
             text: `Hello ${name},\n\nYour appointment has been successfully scheduled with Dr. ${doctorName} on ${date} at ${time}.\n\nThank you!`
