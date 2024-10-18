@@ -4,7 +4,6 @@ const staffSchema = new mongoose.Schema({
     staffId: {
         type: String,
         required: true,
-        unique: true
     },
     name: {
         type: String,
@@ -30,7 +29,6 @@ const staffSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
         match: /.+\@.+\..+/ // Simple email validation
     },
     position: {

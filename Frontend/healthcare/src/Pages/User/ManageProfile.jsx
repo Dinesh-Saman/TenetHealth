@@ -118,6 +118,15 @@ const ManageProfileForm = () => {
     }
   };
 
+  const handleBlur = (field) => {
+    // Trigger validation for the specific field when it loses focus
+    setErrors((prevErrors) => {
+      const validationErrors = validateForm();
+      return { ...prevErrors, [field]: validationErrors[field] };
+    });
+  };
+  
+
   return (
     <Box
       display="flex"
@@ -211,6 +220,7 @@ const ManageProfileForm = () => {
               variant="outlined"
               value={formData.NIC}
               onChange={handleChange}
+              onBlur={() => handleBlur('NIC')}  
               helperText={errors.NIC}
               error={!!errors.NIC}
             />
@@ -224,6 +234,7 @@ const ManageProfileForm = () => {
               variant="outlined"
               value={formData.DOB.substring(0,10)}
               onChange={handleChange}
+              onBlur={() => handleBlur('DOB')}  
               InputLabelProps={{
                 shrink: true,
               }}
@@ -237,8 +248,10 @@ const ManageProfileForm = () => {
               label="Contact"
               name="contact"
               variant="outlined"
+              type="tel" // Set the type to "tel"
               value={formData.contact}
               onChange={handleChange}
+              onBlur={() => handleBlur('contact')}                
               helperText={errors.contact}
               error={!!errors.contact}
             />
@@ -251,6 +264,7 @@ const ManageProfileForm = () => {
               variant="outlined"
               value={formData.emailAddress}
               onChange={handleChange}
+              onBlur={() => handleBlur('emailAddress')}      
               helperText={errors.emailAddress}
               error={!!errors.emailAddress}
             />
