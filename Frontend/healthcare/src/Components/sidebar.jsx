@@ -8,7 +8,7 @@ const SidebarContainer = styled.div`
   height: 260vh;
   background: 
     url('https://t4.ftcdn.net/jpg/03/01/46/11/360_F_301461106_EXXsPkG6yiOPO4Lb2mGyzNjkcWIg39w7.jpg'); /* Replace with your image URL */
-  background-size: cover; /* Cover the entire sidebar */
+  background-size: auto; /* Cover the entire sidebar */
   background-position: center; /* Center the image */
   padding: 20px;
   display: flex;

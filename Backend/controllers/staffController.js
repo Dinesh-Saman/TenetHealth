@@ -54,10 +54,10 @@ exports.addNewStaff = async (req, res) => {
 
         // Send email to the new staff member
         const transporter = nodemailer.createTransport({
-            service: 'gmail', // Use your email service (e.g., Gmail, Yahoo)
+            service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER, // Your email from .env
-                pass: process.env.EMAIL_PASS // Your email password from .env
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
         });
 

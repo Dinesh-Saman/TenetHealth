@@ -4,6 +4,7 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import Sidebar from '../../Components/sidebar';
 import { makeStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert2';
 
 // Custom Pagination Component
 const CustomPagination = ({ count, page, rowsPerPage, onPageChange }) => {
@@ -84,15 +85,41 @@ const ViewResources = () => {
     navigate(`/update-resource/${resourceId}`); // Navigate to the update page with the resource ID
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3002/resources/delete-resource/${id}`);
-      setResourceData(resourceData.filter(resource => resource._id !== id));
-    } catch (error) {
-      console.error("There was an error deleting the resource!", error);
-    }
-  };
 
+  // Delete handler
+  const handleDelete = async (id) => {
+      // Show confirmation dialog
+      const result = await swal.fire({
+          title: 'Are you sure?',
+          text: "You want to delete this resource!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+      });
+  
+      // Proceed with deletion if confirmed
+      if (result.isConfirmed) {
+          try {
+              await axios.delete(`http://localhost:3002/resources/delete-resource/${id}`);
+              setResourceData(resourceData.filter(resource => resource._id !== id));
+              swal.fire(
+                  'Deleted!',
+                  'The resource has been deleted.',
+                  'success'
+              );
+          } catch (error) {
+              console.error("There was an error deleting the resource!", error);
+              swal.fire(
+                  'Error!',
+                  'There was an error deleting the resource.',
+                  'error'
+              );
+          }
+      }
+  };
+  
   const handleSearchQueryChange = (event) => {
     setSearchQuery(event.target.value);
   };
